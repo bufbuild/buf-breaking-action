@@ -26,7 +26,7 @@ steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.1.0
     with:
-      version: '0.40.0' # The version of buf to download and use.
+      version: '0.40.0'
   - uses: bufbuild/buf-breaking-action@v0.1.0
     env:
       BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
@@ -55,7 +55,7 @@ steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.1.0
     with:
-      version: '0.40.0' # The version of buf to download and use.
+      version: '0.40.0'
   - uses: bufbuild/buf-breaking-action@v0.1.0
     env:
       BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
@@ -93,7 +93,7 @@ steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.1.0
     with:
-      version: '0.40.0' # The version of buf to download and use.
+      version: '0.40.0'
   - uses: bufbuild/buf-breaking-action@v0.1.0
     env:
       BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
