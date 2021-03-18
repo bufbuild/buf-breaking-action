@@ -2,7 +2,7 @@
 //
 // All rights reserved.
 
-import cp from 'child_process';
+import * as child from 'child_process';
 import { Error, isError } from './error';
 
 // BreakingResult includes both the raw and formatted FileAnnotation
@@ -24,6 +24,12 @@ export interface FileAnnotation {
     end_line?: number;
 }
 
+// ExecException is a subset of the child.ExecException interface.
+interface ExecException {
+    stdout: Buffer | string;
+    stderr: Buffer | string;
+}
+
 // breaking runs 'buf breaking' with the given command line arguments.
 // Note that we run the same 'buf breaking' command twice so that we
 // can write out the raw content that users see on the command line.
@@ -42,15 +48,15 @@ export function breaking(
     if (isError(jsonOutput)) {
         return jsonOutput
     }
-    const fileAnnotations = parseLines((jsonOutput as string).trim().split('\n').filter(elem => {
+    const fileAnnotations = parseLines(jsonOutput.trim().split('\n').filter(elem => {
         return elem !== ''
     }))
     if (isError(fileAnnotations)) {
         return fileAnnotations
     }
     return {
-        raw: rawOutput as string,
-        fileAnnotations: fileAnnotations as FileAnnotation[],
+        raw: rawOutput,
+        fileAnnotations: fileAnnotations,
     };
 }
 
@@ -59,13 +65,18 @@ export function breaking(
 function runCommand(cmd: string): string | Error {
     let output = '';
     try {
-        cp.execSync(cmd);
+        child.execSync(cmd);
     } catch (error) {
-        output = error.stdout.toString();
-        const commandError = error.stderr.toString();
+        let commandError = '';
+        if (isExecException(error)) {
+            output = error.stdout.toString();
+            commandError = error.stderr.toString();
+        } else {
+            commandError = `failed to run command: ${cmd}`
+        }
         if (commandError !== '') {
             return {
-                errorMessage: commandError,
+                message: commandError,
             };
         }
     }
@@ -75,31 +86,44 @@ function runCommand(cmd: string): string | Error {
 // parseLines parses the given output lines into an array
 // of FileAnnotations.
 function parseLines(lines: string[]): FileAnnotation[] | Error {
-  let fileAnnotations: FileAnnotation[] = [];
+  const fileAnnotations: FileAnnotation[] = [];
   for (let index = 0; index < lines.length; index++) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const fileAnnotation = JSON.parse(lines[index]);
       if (!isFileAnnotation(fileAnnotation)) {
         return {
-          errorMessage: `failed to parse "${lines[index]}" as file annotation`,
+          message: `failed to parse "${lines[index]}" as file annotation`,
         };
       }
       fileAnnotations.push(fileAnnotation);
     } catch (error) {
       return {
-        errorMessage: `failed to parse "${lines[index]}" as file annotation: ${error}`,
+        message: `failed to parse "${lines[index]}" as file annotation`,
       };
     }
   }
   return fileAnnotations;
-};
+}
 
 // isFileAnnotation returns true if the given object is
 // a FileAnnotation according to the minimal fields that
 // must be present.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isFileAnnotation(o: any): o is FileAnnotation {
   return (
     'type' in o &&
     'message' in o
+  );
+}
+
+// isExecException returns true if the given object is
+// a ExecException according to the minimal fields that
+// are used in this module.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isExecException(o: any): o is ExecException {
+  return (
+    'stdout' in o &&
+    'stderr' in o
   );
 }

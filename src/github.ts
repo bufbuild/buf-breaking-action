@@ -43,9 +43,9 @@ export async function postComments(
     repository: string,
     pullRequestNumber: number,
     fileAnnotations: FileAnnotation[],
-) {
-    let inLineComments: Comment[] = [];
-    let reviewComments: string[] = [];
+): Promise<void> {
+    const inLineComments: Comment[] = [];
+    const reviewComments: string[] = [];
     fileAnnotations.forEach((fileAnnotation: FileAnnotation) => {
         if (fileAnnotation.path === undefined || fileAnnotation.path === '') {
             // The FileAnnotation doesn't include a filepath, so we capture this
@@ -107,7 +107,7 @@ function fileAnnotationToComment(fileAnnotation: FileAnnotation): Comment {
         line = 1;
     }
     return {
-        path: fileAnnotation.path || '',
+        path: fileAnnotation.path ?? '',
         body: bufMessagePrefix + fileAnnotation.message, // Prepend the message with a prefix so it's clear it's coming from buf.
         start_line: startLine,
         line: line,
