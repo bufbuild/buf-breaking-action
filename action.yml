@@ -1,6 +1,9 @@
 name: 'buf-breaking'
 description: >
   Check that the input location has no breaking changes compared to the against location.
+branding:
+  icon: alert-triangle
+  color: blue
 inputs:
   # The definition of an input can be found in the following:
   # https://docs.buf.build/inputs#specifying-an-input
