@@ -4,6 +4,8 @@ Verify backwards compatibility for your Protobuf files with
 [buf](https://github.com/bufbuild/buf) and comment in-line on
 pull requests.
 
+  ![image](./static/img/breaking.png)
+
 ## Usage
 
 Refer to the [action.yml](https://github.com/bufbuild/buf-breaking-action/blob/master/action.yml)
