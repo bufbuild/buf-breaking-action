@@ -21,6 +21,8 @@ inputs:
   github_token:
     description: 'The Github authentication token.'
     required: true
+  buf_token:
+    description: 'The buf authentication token used for private inputs.'
 runs:
   using: 'node12'
   main: './dist/main.js'
