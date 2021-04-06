@@ -5,6 +5,10 @@
 import * as child from 'child_process';
 import { Error, isError } from './error';
 
+// breakingExitCode is the exit code used to signal that buf
+// successfully found incompatible changes.
+const breakingExitCode = 100
+
 // BreakingResult includes both the raw and formatted FileAnnotation
 // output of a 'buf breaking` command execution. We include both so
 // that we preserve the same content users would see on the command line.
@@ -26,6 +30,7 @@ export interface FileAnnotation {
 
 // ExecException is a subset of the child.ExecException interface.
 interface ExecException {
+    status: number;
     stdout: Buffer | string;
     stderr: Buffer | string;
 }
@@ -40,11 +45,11 @@ export function breaking(
     input: string,
     against: string,
 ): BreakingResult | Error {
-    const rawOutput = runCommand(`${binaryPath} breaking ${input} --against ${against}`);
+    const rawOutput = runBreakingCommand(`${binaryPath} breaking ${input} --against ${against}`);
     if (isError(rawOutput)) {
         return rawOutput
     }
-    const jsonOutput = runCommand(`${binaryPath} breaking ${input} --against ${against} --error-format=json`);
+    const jsonOutput = runBreakingCommand(`${binaryPath} breaking ${input} --against ${against} --error-format=json`);
     if (isError(jsonOutput)) {
         return jsonOutput
     }
@@ -60,27 +65,26 @@ export function breaking(
     };
 }
 
-// runCommand runs the given command and maps its output into an
-// array of FileAnnotations.
-function runCommand(cmd: string): string | Error {
-    let output = '';
+// runBreakingCommand runs the given command. Note that this function assumes
+// the given command is 'buf breaking', and handles its exit code as such.
+function runBreakingCommand(cmd: string): string | Error {
     try {
         child.execSync(cmd);
     } catch (error) {
-        let commandError = '';
         if (isExecException(error)) {
-            output = error.stdout.toString();
-            commandError = error.stderr.toString();
-        } else {
-            commandError = `failed to run command: ${cmd}`
-        }
-        if (commandError !== '') {
+            if (error.status == breakingExitCode) {
+                // The command found warnings to report.
+                return error.stdout.toString();
+            }
             return {
-                message: commandError,
+                message: error.stderr.toString(),
             };
         }
+        return {
+            message: `failed to run command: ${cmd}`
+        };
     }
-    return output
+    return ''
 }
 
 // parseLines parses the given output lines into an array
@@ -123,6 +127,7 @@ function isFileAnnotation(o: any): o is FileAnnotation {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isExecException(o: any): o is ExecException {
   return (
+    'status' in o &&
     'stdout' in o &&
     'stderr' in o
   );
