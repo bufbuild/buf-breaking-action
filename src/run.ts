@@ -124,7 +124,7 @@ async function runBreaking(): Promise<null|Error> {
         // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
         core.info(`::error file=${path},line=${start_line},col=${start_column}::${message}`);
     })
-
-    // All file annotations in the result have been processed, return an empty error.
-    return {message: ""};
+    return {
+        message: `buf found ${result.fileAnnotations.length} breaking changes.\n`
+    };
 }
