@@ -27,15 +27,14 @@ export interface BreakingResult {
     fileAnnotations: FileAnnotation[];
 }
 
-// FileAnnotation conforms the buf FileAnnotation definition
+// FileAnnotation is a subset of the buf FileAnnotation definition
 // referenced from the following:
 // https://github.com/bufbuild/buf/blob/8255257bd94c9f1b5faa27242211c5caad05be79/internal/buf/bufanalysis/bufanalysis.go#L102
 export interface FileAnnotation {
-    type: string;
     message: string;
     path?: string;
     start_line?: number;
-    end_line?: number;
+    start_column?: number;
 }
 
 // ExecException is a subset of the child.ExecException interface.
@@ -126,7 +125,6 @@ function parseLines(lines: string[]): FileAnnotation[] | Error {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isFileAnnotation(o: any): o is FileAnnotation {
   return (
-    'type' in o &&
     'message' in o
   );
 }
