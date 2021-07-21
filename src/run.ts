@@ -125,6 +125,6 @@ async function runBreaking(): Promise<null|Error> {
         core.info(`::error file=${path},line=${start_line},col=${start_column}::${message}`);
     })
     return {
-        message: `buf found ${result.fileAnnotations.length} breaking changes.\n`
+        message: `buf found ${result.fileAnnotations.length} breaking changes.`
     };
 }
