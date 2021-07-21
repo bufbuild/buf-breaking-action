@@ -117,6 +117,11 @@ async function runBreaking(): Promise<null|Error> {
             core.error(message);
             return;
         }
+        // This uses the `::error` message feature of Github Actions. It converts the message to
+        // an error log in the Github Actions console and creates an error annotation at the given
+        // file path and line. This is not currently supported with `core.error`.
+        // For more information, see the documentation:
+        // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
         core.info(`::error file=${path},line=${start_line},col=${start_column}::${message}`);
     })
 
