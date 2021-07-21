@@ -13,15 +13,13 @@
 // limitations under the License.
 
 import * as core from '@actions/core';
-import * as github from '@actions/github'
 import * as io from '@actions/io';
 import * as child from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
-import { breaking } from './buf';
+import { breaking, FileAnnotation } from './buf';
 import { Error, isError } from './error';
-import { postComments } from './github';
 
 // minimumBufVersion is the minimum buf version required to
 // run this action. At least this version is required because
@@ -59,12 +57,6 @@ export async function run(): Promise<void> {
 // runBreaking runs the buf-breaking action, and returns
 // a non-empty error if it fails.
 async function runBreaking(): Promise<null|Error> {
-    const authenticationToken = core.getInput('github_token');
-    if (authenticationToken === '') {
-        return {
-            message: 'a Github authentication token was not provided'
-        };
-    }
     const input = core.getInput('input');
     if (input === '') {
         return {
@@ -75,18 +67,6 @@ async function runBreaking(): Promise<null|Error> {
     if (against === '') {
         return {
             message: 'an against was not provided'
-        };
-    }
-    const owner = github.context.repo.owner;
-    if (owner === '') {
-        return {
-            message: 'an owner was not provided'
-        };
-    }
-    const repository = github.context.repo.repo;
-    if (repository === '') {
-        return {
-            message: 'a repository was not provided'
         };
     }
     const binaryPath = await io.which('buf', true);
@@ -129,31 +109,17 @@ async function runBreaking(): Promise<null|Error> {
         return null;
     }
 
-    const pullRequestNumber = github.context.payload.pull_request?.number;
-    if (pullRequestNumber !== undefined) {
-        // If this action was configured for pull requests, we post the
-        // FileAnnotations as comments.
-        try {
-            await postComments(
-                authenticationToken,
-                owner,
-                repository,
-                pullRequestNumber,
-                result.fileAnnotations,
-            );
-        } catch (error) {
-            // Log the error, but continue so that we still write
-            // out the raw output to the user.
-            if (isError(error)) {
-                core.info(`Failed to write comments in-line: ${error.message}`);
-            } else {
-                core.info(`Failed to write comments in-line`);
-            }
+    // If this action was configured for pull requests, we post the
+    // FileAnnotations as comments.
+    result.fileAnnotations.forEach((fileAnnotation: FileAnnotation) => {
+        const { path, start_line, start_column, message } = fileAnnotation;
+        if (path === undefined || start_line === undefined || start_column === undefined) {
+            core.error(message);
+            return;
         }
-    }
+        core.info(`::error file=${path},line=${start_line},col=${start_column}::${message}`);
+    })
 
-    // Include the raw output so that the console includes sufficient context.
-    return {
-        message: `buf found ${result.fileAnnotations.length} breaking failures.\n${result.raw}`
-    };
+    // All file annotations in the result have been processed, return an empty error.
+    return {message: ""};
 }
