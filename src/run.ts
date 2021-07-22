@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as core from '@actions/core';
+import * as github from '@actions/github';
 import * as io from '@actions/io';
 import * as child from 'child_process';
 import * as fs from 'fs';
@@ -34,6 +35,12 @@ const minimumBufVersion = '0.41.0'
 // this can be found in the @actions/tools-cache module.
 // https://github.com/actions/toolkit/blob/4bf916289e5e32bb7d1bd7f21842c3afeab3b25a/packages/tool-cache/src/tool-cache.ts#L701
 const runnerTempEnvKey = 'RUNNER_TEMP'
+
+// bufInputHTTPSUsername is the environment variable key
+// used to access the repository in order for `buf breaking`
+// to run against. More information can be found here:
+// https://docs.buf.build/breaking-usage
+const bufInputHTTPSUsername = 'BUF_INPUT_HTTPS_USERNAME'
 
 export async function run(): Promise<void> {
     try {
@@ -81,6 +88,8 @@ async function runBreaking(): Promise<null|Error> {
             message: `buf must be at least version ${minimumBufVersion}, but found ${version}`
         };
     }
+
+    process.env[bufInputHTTPSUsername] = github.context.actor
 
     const bufToken = core.getInput('buf_token');
     if (bufToken !== '') {
