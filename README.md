@@ -26,9 +26,6 @@ steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.3.0
   - uses: bufbuild/buf-breaking-action@v0.3.0
-    env:
-      BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
-      BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
     with:
       against: 'https://github.com/acme/weather.git#branch=main'
 ```
@@ -52,9 +49,6 @@ steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.3.0
   - uses: bufbuild/buf-breaking-action@v0.3.0
-    env:
-      BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
-      BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
     with:
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
@@ -87,9 +81,6 @@ steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.3.0
   - uses: bufbuild/buf-breaking-action@v0.3.0
-    env:
-      BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
-      BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
     with:
       input: 'proto'
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
