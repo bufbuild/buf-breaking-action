@@ -16,6 +16,12 @@ inputs:
   against:
     description: 'The reference to check compatibility against.'
     required: true
+  buf_input_https_username:
+    description: 'The username for the repository to check compatibility against.'
+    default: ${{ github.actor }}
+  buf_input_https_password:
+    description: 'The password for the repository to check compatibility against.'
+    default: ${{ github.token }}
   buf_token:
     description: 'The buf authentication token used for private inputs.'
 runs:

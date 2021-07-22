@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import * as core from '@actions/core';
-import * as github from '@actions/github';
 import * as io from '@actions/io';
 import * as child from 'child_process';
 import * as fs from 'fs';
@@ -37,10 +36,16 @@ const minimumBufVersion = '0.41.0'
 const runnerTempEnvKey = 'RUNNER_TEMP'
 
 // bufInputHTTPSUsername is the environment variable key
-// used to access the repository in order for `buf breaking`
-// to run against. More information can be found here:
+// used for the username to access the repository in order for
+// `buf breaking` to run against. More information can be found here:
 // https://docs.buf.build/breaking-usage
 const bufInputHTTPSUsername = 'BUF_INPUT_HTTPS_USERNAME'
+
+// bufInputHTTPSPassword is the environment variable key
+// used for the password to access the repository in order for
+// `buf breaking` to run against. More information can be found here:
+// https://docs.buf.build/breaking-usage
+const bufInputHTTPSPassword = 'BUF_INPUT_HTTPS_PASSWORD'
 
 export async function run(): Promise<void> {
     try {
@@ -76,6 +81,20 @@ async function runBreaking(): Promise<null|Error> {
             message: 'an against was not provided'
         };
     }
+    const username = core.getInput('buf_input_https_username');
+    if (username === '') {
+        return {
+            message: 'github username not provided'
+        };
+    }
+    process.env[bufInputHTTPSUsername] = username
+    const password = core.getInput('buf_input_https_password');
+    if (password === '') {
+        return {
+            message: 'github token not provided'
+        };
+    }
+    process.env[bufInputHTTPSPassword] = password
     const binaryPath = await io.which('buf', true);
     if (binaryPath === '') {
         return {
@@ -89,7 +108,6 @@ async function runBreaking(): Promise<null|Error> {
         };
     }
 
-    process.env[bufInputHTTPSUsername] = github.context.actor
 
     const bufToken = core.getInput('buf_token');
     if (bufToken !== '') {
