@@ -35,6 +35,18 @@ const minimumBufVersion = '0.41.0'
 // https://github.com/actions/toolkit/blob/4bf916289e5e32bb7d1bd7f21842c3afeab3b25a/packages/tool-cache/src/tool-cache.ts#L701
 const runnerTempEnvKey = 'RUNNER_TEMP'
 
+// bufInputHTTPSUsername is the environment variable key
+// used for the username to access the repository in order for
+// `buf breaking` to run against. More information can be found here:
+// https://docs.buf.build/breaking-usage
+const bufInputHTTPSUsername = 'BUF_INPUT_HTTPS_USERNAME'
+
+// bufInputHTTPSPassword is the environment variable key
+// used for the password to access the repository in order for
+// `buf breaking` to run against. More information can be found here:
+// https://docs.buf.build/breaking-usage
+const bufInputHTTPSPassword = 'BUF_INPUT_HTTPS_PASSWORD'
+
 export async function run(): Promise<void> {
     try {
         const result = await runBreaking();
@@ -69,6 +81,20 @@ async function runBreaking(): Promise<null|Error> {
             message: 'an against was not provided'
         };
     }
+    const username = core.getInput('buf_input_https_username');
+    if (username === '') {
+        return {
+            message: 'buf_input_https_username not provided'
+        };
+    }
+    process.env[bufInputHTTPSUsername] = username
+    const password = core.getInput('buf_input_https_password');
+    if (password === '') {
+        return {
+            message: 'buf_input_https_password not provided'
+        };
+    }
+    process.env[bufInputHTTPSPassword] = password
     const binaryPath = await io.which('buf', true);
     if (binaryPath === '') {
         return {
