@@ -84,14 +84,14 @@ async function runBreaking(): Promise<null|Error> {
     const username = core.getInput('buf_input_https_username');
     if (username === '') {
         return {
-            message: 'github username not provided'
+            message: 'buf_input_https_username not provided'
         };
     }
     process.env[bufInputHTTPSUsername] = username
     const password = core.getInput('buf_input_https_password');
     if (password === '') {
         return {
-            message: 'github token not provided'
+            message: 'buf_input_https_password not provided'
         };
     }
     process.env[bufInputHTTPSPassword] = password
@@ -107,7 +107,6 @@ async function runBreaking(): Promise<null|Error> {
             message: `buf must be at least version ${minimumBufVersion}, but found ${version}`
         };
     }
-
 
     const bufToken = core.getInput('buf_token');
     if (bufToken !== '') {
