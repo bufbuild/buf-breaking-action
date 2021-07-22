@@ -24,16 +24,13 @@ hypothetical `https://github.com/acme/weather.git` repository.
 on: pull_request
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.1.0
-    with:
-      version: '0.41.0'
-  - uses: bufbuild/buf-breaking-action@v0.2.0
+  - uses: bufbuild/buf-setup-action@v0.3.0
+  - uses: bufbuild/buf-breaking-action@v0.3.0
     env:
       BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
       BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
     with:
       against: 'https://github.com/acme/weather.git#branch=main'
-      github_token: ${{ github.token }}
 ```
 
 ### Push
@@ -53,16 +50,13 @@ on:
       - main
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.1.0
-    with:
-      version: '0.41.0'
-  - uses: bufbuild/buf-breaking-action@v0.2.0
+  - uses: bufbuild/buf-setup-action@v0.3.0
+  - uses: bufbuild/buf-breaking-action@v0.3.0
     env:
       BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
       BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
     with:
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
-      github_token: ${{ github.token }}
 ```
 
 ### Inputs
@@ -91,17 +85,14 @@ on:
       - main
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.1.0
-    with:
-      version: '0.41.0'
-  - uses: bufbuild/buf-breaking-action@v0.2.0
+  - uses: bufbuild/buf-setup-action@v0.3.0
+  - uses: bufbuild/buf-breaking-action@v0.3.0
     env:
       BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
       BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
     with:
       input: 'proto'
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
-      github_token: ${{ github.token }}
 ```
 
 The `buf-breaking` action is also commonly used alongside other `buf` actions,
