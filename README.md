@@ -8,7 +8,7 @@ pull requests.
 
 ## Usage
 
-Refer to the [action.yml](https://github.com/bufbuild/buf-breaking-action/blob/master/action.yml)
+Refer to the [action.yml](https://github.com/bufbuild/buf-breaking-action/blob/main/action.yml)
 to see all of the action parameters.
 
 The `buf-breaking` action requires that `buf` is installed in the Github Action
