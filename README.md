@@ -24,11 +24,8 @@ hypothetical `https://github.com/acme/weather.git` repository.
 on: pull_request
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.3.0
-  - uses: bufbuild/buf-breaking-action@v0.3.0
-    env:
-      BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
-      BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
+  - uses: bufbuild/buf-setup-action@v0.3.1
+  - uses: bufbuild/buf-breaking-action@v0.4.0
     with:
       against: 'https://github.com/acme/weather.git#branch=main'
 ```
@@ -50,11 +47,8 @@ on:
       - main
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.3.0
-  - uses: bufbuild/buf-breaking-action@v0.3.0
-    env:
-      BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
-      BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
+  - uses: bufbuild/buf-setup-action@v0.3.1
+  - uses: bufbuild/buf-breaking-action@v0.4.0
     with:
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
@@ -85,11 +79,8 @@ on:
       - main
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.3.0
-  - uses: bufbuild/buf-breaking-action@v0.3.0
-    env:
-      BUF_INPUT_HTTPS_USERNAME: ${{ github.actor }}
-      BUF_INPUT_HTTPS_PASSWORD: ${{ github.token }}
+  - uses: bufbuild/buf-setup-action@v0.3.1
+  - uses: bufbuild/buf-breaking-action@v0.4.0
     with:
       input: 'proto'
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
