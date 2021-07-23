@@ -22,12 +22,14 @@ hypothetical `https://github.com/acme/weather.git` repository.
 
 ```yaml
 on: pull_request
-steps:
-  - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.3.1
-  - uses: bufbuild/buf-breaking-action@v0.4.0
-    with:
-      against: 'https://github.com/acme/weather.git#branch=main'
+jobs:
+  validate-protos:
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bufbuild/buf-setup-action@v0.3.1
+      - uses: bufbuild/buf-breaking-action@v0.4.0
+        with:
+          against: 'https://github.com/acme/weather.git#branch=main'
 ```
 
 ### Push
@@ -45,12 +47,14 @@ on:
   push:
     branches:
       - main
-steps:
-  - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.3.1
-  - uses: bufbuild/buf-breaking-action@v0.4.0
-    with:
-      against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
+jobs:
+  validate-protos:
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bufbuild/buf-setup-action@v0.3.1
+      - uses: bufbuild/buf-breaking-action@v0.4.0
+        with:
+          against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
 
 ### Inputs
@@ -73,10 +77,6 @@ $ tree
 ```
 
 ```yaml
-on:
-  push:
-    branches:
-      - main
 steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.3.1
