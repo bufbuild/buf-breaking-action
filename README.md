@@ -32,6 +32,11 @@ jobs:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
 
+This configuration will compare against the `main` branch of the repository.
+
+Please note that in order for the `buf-breaking-action` to run and detect changes successfully,
+both the `input` and the `against` will need to have valid Buf modules that compile.
+
 ### Push
 
 When we configure this action on `push`, we often need to update the reference to
