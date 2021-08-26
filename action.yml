@@ -9,8 +9,7 @@ inputs:
   # https://docs.buf.build/inputs#specifying-an-input
   input:
     description: 'The input path.'
-    required: true
-    default: '.'
+    required: false
   # The definition of an against input can be found in the following:
   # https://docs.buf.build/inputs#specifying-an-input
   against:
