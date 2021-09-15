@@ -26,8 +26,8 @@ jobs:
   validate-protos:
     steps:
       - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.3.1
-      - uses: bufbuild/buf-breaking-action@v0.4.0
+      - uses: bufbuild/buf-setup-action@v0.5.0
+      - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
@@ -57,8 +57,8 @@ jobs:
   validate-protos:
     steps:
       - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.3.1
-      - uses: bufbuild/buf-breaking-action@v0.4.0
+      - uses: bufbuild/buf-setup-action@v0.5.0
+      - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
@@ -85,8 +85,8 @@ $ tree
 ```yaml
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.3.1
-  - uses: bufbuild/buf-breaking-action@v0.4.0
+  - uses: bufbuild/buf-setup-action@v0.5.0
+  - uses: bufbuild/buf-breaking-action@v1
     with:
       input: 'proto'
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
