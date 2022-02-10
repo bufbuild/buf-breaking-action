@@ -1,42 +1,55 @@
-# buf-breaking-action
+# The `buf-breaking` Action
 
-Verify backwards compatibility for your Protobuf files with
-[buf](https://github.com/bufbuild/buf) and comment in-line on
-pull requests.
+This [Action][actions] enables you to perform [breaking change detection][breaking] with
+[Buf] in your GitHub Actions pipelines. If it detects breaking changes in a pull request, it
+automatically creates inline comments where the change occurs.
 
-  ![image](./static/img/breaking.png)
+![image](./static/img/breaking.png)
 
 ## Usage
 
-Refer to the [action.yml](https://github.com/bufbuild/buf-breaking-action/blob/main/action.yml)
-to see all of the action parameters.
-
-The `buf-breaking` action requires that `buf` is installed in the Github Action
-runner, so we'll use the [buf-setup][1] action to install it.
-
-In most cases, you'll only need to configure several variables which are referenced
-in the examples below. In these examples, we'll configure the action on the
-hypothetical `https://github.com/acme/weather.git` repository.
-
-### Pull requests
+Here's an example usage of The `buf-breaking` Action:
 
 ```yaml
 on: pull_request
 jobs:
   validate-protos:
     steps:
-      - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.5.0
-      - uses: bufbuild/buf-breaking-action@v1
+      - uses: actions/checkout@v2               # Run `git checkout`
+      - uses: bufbuild/buf-setup-action@v0.5.0  # Install the `buf` CLI
+      - uses: bufbuild/buf-breaking-action@v1   # Perform breaking change detection
         with:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
 
-This configuration will compare against the `main` branch of the repository.
+With this configuration, the Action detects breaking changes between the Protobuf sources in the
+current branch against the `main` branch of the repository.
 
-Please note that in order for the `buf-breaking-action` to run and detect changes successfully,
-both the `input` and the `against` must compile. This can be verified by running `buf build`
-in both inputs.
+The `buf-breaking` Action is commonly used with the [`buf-push`][buf-push] Action, which can push
+the current Input to the [Buf Schema Registry][bsr] (BSR) if no breaking change is detected. See the
+[Push](#push) section below for more.
+
+## Configuration
+
+Parameter | Description | Required | Default
+:---------|:------------|:---------|:-------
+`input` | The [Input] path | | `.`
+`against` | The reference to check compatibility against | ✅ |
+`buf_input_https_username` | The username for the repository to check compatibility against. | | `${{ github.actor }}`
+`buf_input_https_password` | The password for the repository to check compatibility against. | | `${{ github.token }}`
+`buf_token` | The Buf [authentication token][token] used for private [Inputs][input]. | |
+
+These parameters are derived from [`action.yml`](./action.yml).
+
+For `buf-breaking-action` to run, the `buf` CLI needs to be installed first. We recommend using the
+[`buf-setup`][buf-setup] Action to install it.
+
+In most cases, you'll only need to configure several variables which are referenced in the examples
+below. In these examples, we'll configure the action on the hypothetical `https://github.com/acme/weather.git` repository.
+
+> **Note**: For the `buf-breaking-action` to detect changes successfully, both the `input` and the
+* `against` must be buildable by the `buf` CLI. You can verify this locally using the
+> [`buf build`][buf-build] command on both Inputs.
 
 ### Push
 
@@ -93,8 +106,15 @@ steps:
 ```
 
 The `buf-breaking` action is also commonly used alongside other `buf` actions,
-such as [buf-lint][2] and [buf-push][3].
+such as [`buf-lint`][buf-lint] and [`buf-push`][buf-push].
 
-  [1]: https://github.com/marketplace/actions/buf-setup
-  [2]: https://github.com/marketplace/actions/buf-lint
-  [3]: https://github.com/marketplace/actions/buf-push
+[actions]: https://docs.github.com/actions
+[breaking]: https:/docs.buf.build/breaking
+[bsr]: https://docs.buf.build/bsr
+[buf]: https://buf.build
+[buf-build]: https://docs.buf.build/build/usage
+[buf-lint]: https://github.com/marketplace/actions/buf-lint
+[buf-push]: https://github.com/marketplace/actions/buf-push
+[buf-setup]: https://github.com/marketplace/actions/buf-setup
+[input]: https://docs.buf.build/reference/inputs
+[token]: https://docs.buf.build/bsr/authentication#create-an-api-token
