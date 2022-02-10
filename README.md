@@ -35,8 +35,8 @@ Parameter | Description | Required | Default
 :---------|:------------|:---------|:-------
 `input` | The [Input] path | | `.`
 `against` | The reference to check compatibility against | ✅ |
-`buf_input_https_username` | The username for the repository to check compatibility against. | | `${{ github.actor }}`
-`buf_input_https_password` | The password for the repository to check compatibility against. | | `${{ github.token }}`
+`buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{ github.actor }}`][context]
+`buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{ github.token }}`][context]
 `buf_token` | The Buf [authentication token][token] used for private [Inputs][input]. | |
 
 These parameters are derived from [`action.yml`](./action.yml).
@@ -116,5 +116,6 @@ such as [`buf-lint`][buf-lint] and [`buf-push`][buf-push].
 [buf-lint]: https://github.com/marketplace/actions/buf-lint
 [buf-push]: https://github.com/marketplace/actions/buf-push
 [buf-setup]: https://github.com/marketplace/actions/buf-setup
+[context]: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
 [input]: https://docs.buf.build/reference/inputs
 [token]: https://docs.buf.build/bsr/authentication#create-an-api-token
