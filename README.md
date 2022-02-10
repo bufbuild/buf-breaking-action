@@ -60,7 +60,7 @@ Simple breaking change detection | [`examples/simple-change-detection.yaml`](./e
 Detect breaking changes, then push | [`examples/detect-and-push.yaml`](./examples/detect-and-push.yaml)
 Detect breaking changes in a sub-directory | [`examples/detect-in-directory.yaml`](./examples/detect-in-directory.yaml)
 
-## Common workflows
+## Common tasks
 
 ### Run on push
 
