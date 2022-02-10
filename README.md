@@ -7,8 +7,8 @@ automatically creates inline comments under specific lines in your `.proto` file
 ![image](./static/img/breaking.png)
 
 `buf-breaking-action` is also commonly used alongside other `buf` Actions, such as
-[`buf-lint`][buf-lint], which performs [lints][lint] Protobuf sources, and [`buf-push`][buf-push],
-which pushes Protobuf sources to the  [Buf Schema Registry][bsr] (BSR). See [example
+[`buf-lint`][buf-lint], which [lints][lint] Protobuf sources, and [`buf-push`][buf-push],
+which pushes Buf [modules] to the  [Buf Schema Registry][bsr] (BSR). See [example
 configurations](#example-configurations) for more.
 
 ## Usage
@@ -133,4 +133,5 @@ steps:
 [context]: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
 [input]: https://docs.buf.build/reference/inputs
 [lint]: https://docs.buf.build/lint/usage
+[modules]: https://docs.buf.build/bsr/overview#module
 [token]: https://docs.buf.build/bsr/authentication#create-an-api-token
