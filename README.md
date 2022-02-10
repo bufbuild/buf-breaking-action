@@ -25,6 +25,13 @@ jobs:
 With this configuration, the Action detects breaking changes between the Protobuf sources in the
 current branch against the `main` branch of the repository.
 
+For the `buf-breaking` Action to run, the `buf` CLI needs to be installed in the GitHub Actions
+Runner first. We recommend using the [`buf-setup`][buf-setup] Action to install it (as in the
+example above).
+
+
+
+
 The `buf-breaking` Action is commonly used with the [`buf-push`][buf-push] Action, which can push
 the current Input to the [Buf Schema Registry][bsr] (BSR) if no breaking change is detected. See the
 [Push](#push) section below for more.
@@ -35,23 +42,20 @@ Parameter | Description | Required | Default
 :---------|:------------|:---------|:-------
 `input` | The [Input] path | | `.`
 `against` | The reference to check compatibility against | ✅ |
-`buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{ github.actor }}`][context]
-`buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{ github.token }}`][context]
+`buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{github.actor}}`][context]
+`buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{github.token}}`][context]
 `buf_token` | The Buf [authentication token][token] used for private [Inputs][input]. | |
 
 These parameters are derived from [`action.yml`](./action.yml).
-
-For `buf-breaking-action` to run, the `buf` CLI needs to be installed first. We recommend using the
-[`buf-setup`][buf-setup] Action to install it.
-
-In most cases, you'll only need to configure several variables which are referenced in the examples
-below. In these examples, we'll configure the action on the hypothetical `https://github.com/acme/weather.git` repository.
 
 > **Note**: For the `buf-breaking-action` to detect changes successfully, both the `input` and the
 * `against` must be buildable by the `buf` CLI. You can verify this locally using the
 > [`buf build`][buf-build] command on both Inputs.
 
 ### Push
+
+A common Buf workflow in GitHub Actions is to push the Protobuf sources in the current branch to the
+[Buf Schema Registry][bsr] if no breaking changes are detected
 
 When we configure this action on `push`, we often need to update the reference to
 check compatibility `against` so that we don't accidentally verify against the same

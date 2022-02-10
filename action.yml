@@ -8,9 +8,9 @@ inputs:
   # For more on Buf Inputs:
   # https://docs.buf.build/inputs#specifying-an-input
   input:
-    description: "The Input path."
+    description: "The Input path. Defaults to the root of the current repository."
     default: "."
-  # For more on "against" targets in breaking change detection:
+  # For more on "against" in breaking change detection:
   # https://docs.buf.build/breaking/usage#run-breaking-change-detection
   against:
     description: "The Input to check compatibility against."

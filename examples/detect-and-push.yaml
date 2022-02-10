@@ -1,0 +1,16 @@
+on: pull_request
+jobs:
+  validate-protos:
+    steps:
+      # Run `git checkout`
+      - uses: actions/checkout@v2
+      # Install the `buf` CLI
+      - uses: bufbuild/buf-setup-action@v0.5.0
+      # Perform breaking change detection against the `main` branch
+      - uses: bufbuild/buf-breaking-action@v1
+        with:
+          against: 'https://github.com/acme/weather.git#branch=main'
+      # Push the changes to the Buf Schema Registry if breaking change detection succeeds
+      - uses: bufbuild/buf-push-action@v1
+        with:
+          buf_token: ${{ secrets.BUF_TOKEN }}
