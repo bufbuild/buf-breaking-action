@@ -6,6 +6,8 @@ automatically creates inline comments where the change occurs.
 
 ![image](./static/img/breaking.png)
 
+Breaking change detection is essential to ensuring backwards compatibility in Protobuf APIs.
+
 ## Usage
 
 Here's an example usage of The `buf-breaking` Action:
@@ -17,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2               # Run `git checkout`
       - uses: bufbuild/buf-setup-action@v0.5.0  # Install the `buf` CLI
-      - uses: bufbuild/buf-breaking-action@v1   # Perform breaking change detection
+      - uses: bufbuild/buf-breaking-action@v1   # Perform breaking change detection against `main`
         with:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
@@ -29,12 +31,10 @@ For the `buf-breaking` Action to run, the `buf` CLI needs to be installed in the
 Runner first. We recommend using the [`buf-setup`][buf-setup] Action to install it (as in the
 example above).
 
-
-
-
-The `buf-breaking` Action is commonly used with the [`buf-push`][buf-push] Action, which can push
-the current Input to the [Buf Schema Registry][bsr] (BSR) if no breaking change is detected. See the
-[Push](#push) section below for more.
+The `buf-breaking` action is also commonly used alongside other `buf` Actions, such as
+[`buf-lint`][buf-lint], which performs [lints][lint] Protobuf sources, and [`buf-push`][buf-push],
+which pushes Protobuf sources to the  [Buf Schema Registry][bsr] (BSR). See [example
+configurations](#example-configurations) for more.
 
 ## Configuration
 
@@ -52,20 +52,24 @@ These parameters are derived from [`action.yml`](./action.yml).
 * `against` must be buildable by the `buf` CLI. You can verify this locally using the
 > [`buf build`][buf-build] command on both Inputs.
 
-### Push
+### Example configurations
+
+Example | Config file
+:-------|:-----------
+Simple breaking change detection | [`examples/simple-change-detection.yaml`](./examples/simple-change-detection.yaml)
+Detect breaking changes, then push | [`examples/detect-and-push.yaml`](./examples/detect-and-push.yaml)
+Detect breaking changes in a sub-directory | [`examples/detect-in-directory.yaml`](./examples/detect-in-directory.yaml)
+
+## Common workflows
+
+### Run on push
 
 A common Buf workflow in GitHub Actions is to push the Protobuf sources in the current branch to the
-[Buf Schema Registry][bsr] if no breaking changes are detected
-
-When we configure this action on `push`, we often need to update the reference to
-check compatibility `against` so that we don't accidentally verify against the same
-commit.
-
-For example, if we want to run the `buf-breaking` action for all commits pushed to
-the `main` branch, we'll need to update our `against` reference to refer to the
-previous commit, i.e. `HEAD~1`.
+[Buf Schema Registry][bsr] if no breaking changes are detected against the previous commit (where
+`ref` is `HEAD~1`).
 
 ```yaml
+# Apply to all pushes to `main`
 on:
   push:
     branches:
@@ -73,20 +77,17 @@ on:
 jobs:
   validate-protos:
     steps:
-      - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.5.0
-      - uses: bufbuild/buf-breaking-action@v1
+      - uses: actions/checkout@v2              # Run `git checkout`
+      - uses: bufbuild/buf-setup-action@v0.5.0 # Install the `buf` CLI
+      - uses: bufbuild/buf-breaking-action@v1  # Perform breaking change detection against the last commit
         with:
           against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
 
-### Inputs
+### Run against Input in sub-directory
 
-Some repositories are structured so that their `buf.yaml` is defined
-in a sub-directory alongside their Protobuf sources, such as a `proto/`
-directory. In this case, you can specify the relative `input` path and
-the `subdir` option in the `against` reference (this is relevant for
-both `pull_request` and `push`).
+Some repositories are structured in such a way that their [`buf.yaml`][buf-yaml] is defined in a
+sub-directory alongside their Protobuf sources, such as a `proto/` directory. Here's an example:
 
 ```sh
 $ tree
@@ -99,6 +100,11 @@ $ tree
     └── buf.yaml
 ```
 
+In that case, you can target the `proto` sub-directory in the by setting
+
+* `input` to `proto`, and
+* `subdir` to `proto` in the `against` reference.
+
 ```yaml
 steps:
   - uses: actions/checkout@v2
@@ -109,9 +115,6 @@ steps:
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
 ```
 
-The `buf-breaking` action is also commonly used alongside other `buf` actions,
-such as [`buf-lint`][buf-lint] and [`buf-push`][buf-push].
-
 [actions]: https://docs.github.com/actions
 [breaking]: https:/docs.buf.build/breaking
 [bsr]: https://docs.buf.build/bsr
@@ -120,6 +123,8 @@ such as [`buf-lint`][buf-lint] and [`buf-push`][buf-push].
 [buf-lint]: https://github.com/marketplace/actions/buf-lint
 [buf-push]: https://github.com/marketplace/actions/buf-push
 [buf-setup]: https://github.com/marketplace/actions/buf-setup
+[buf-yaml]: https://docs.buf.build/configuration/v1/buf-yaml
 [context]: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
 [input]: https://docs.buf.build/reference/inputs
+[lint]: https://docs.buf.build/lint/usage
 [token]: https://docs.buf.build/bsr/authentication#create-an-api-token

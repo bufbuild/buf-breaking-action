@@ -1,3 +1,4 @@
+# Apply to all pull requests
 on: pull_request
 jobs:
   validate-protos:
