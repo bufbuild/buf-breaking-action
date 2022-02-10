@@ -1,25 +1,31 @@
-# The `buf-breaking` Action
+# `buf-breaking-action`
 
-This [Action][actions] enables you to perform [breaking change detection][breaking] with
+This [Action][actions] enables you to run [breaking change detection][breaking] with
 [Buf] in your GitHub Actions pipelines. If it detects breaking changes in a pull request, it
-automatically creates inline comments where the change occurs.
+automatically creates inline comments under specific lines in your `.proto` files.
 
 ![image](./static/img/breaking.png)
 
-Breaking change detection is essential to ensuring backwards compatibility in Protobuf APIs.
+`buf-breaking-action` is also commonly used alongside other `buf` Actions, such as
+[`buf-lint`][buf-lint], which performs [lints][lint] Protobuf sources, and [`buf-push`][buf-push],
+which pushes Protobuf sources to the  [Buf Schema Registry][bsr] (BSR). See [example
+configurations](#example-configurations) for more.
 
 ## Usage
 
-Here's an example usage of The `buf-breaking` Action:
+Here's an example usage of the `buf-breaking` Action:
 
 ```yaml
-on: pull_request
+on: pull_request # Apply to all pull requests
 jobs:
   validate-protos:
     steps:
-      - uses: actions/checkout@v2               # Run `git checkout`
-      - uses: bufbuild/buf-setup-action@v0.5.0  # Install the `buf` CLI
-      - uses: bufbuild/buf-breaking-action@v1   # Perform breaking change detection against `main`
+      # Run `git checkout`
+      - uses: actions/checkout@v2
+      # Install the `buf` CLI
+      - uses: bufbuild/buf-setup-action@v0.5.0
+      # Run breaking change detection against `main`
+      - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
@@ -27,14 +33,11 @@ jobs:
 With this configuration, the Action detects breaking changes between the Protobuf sources in the
 current branch against the `main` branch of the repository.
 
+## Prerequisites
+
 For the `buf-breaking` Action to run, the `buf` CLI needs to be installed in the GitHub Actions
 Runner first. We recommend using the [`buf-setup`][buf-setup] Action to install it (as in the
 example above).
-
-The `buf-breaking` action is also commonly used alongside other `buf` Actions, such as
-[`buf-lint`][buf-lint], which performs [lints][lint] Protobuf sources, and [`buf-push`][buf-push],
-which pushes Protobuf sources to the  [Buf Schema Registry][bsr] (BSR). See [example
-configurations](#example-configurations) for more.
 
 ## Configuration
 
@@ -69,17 +72,19 @@ A common Buf workflow in GitHub Actions is to push the Protobuf sources in the c
 `ref` is `HEAD~1`).
 
 ```yaml
-# Apply to all pushes to `main`
-on:
+on: # Apply to all pushes to `main`
   push:
     branches:
       - main
 jobs:
   validate-protos:
     steps:
-      - uses: actions/checkout@v2              # Run `git checkout`
-      - uses: bufbuild/buf-setup-action@v0.5.0 # Install the `buf` CLI
-      - uses: bufbuild/buf-breaking-action@v1  # Perform breaking change detection against the last commit
+      # Run `git checkout`
+      - uses: actions/checkout@v2
+      # Install the `buf` CLI
+      - uses: bufbuild/buf-setup-action@v0.5.0
+      # Run breaking change detection against the last commit
+      - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
@@ -109,6 +114,7 @@ In that case, you can target the `proto` sub-directory in the by setting
 steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.5.0
+  # Run breaking change detection against the last commit
   - uses: bufbuild/buf-breaking-action@v1
     with:
       input: 'proto'
