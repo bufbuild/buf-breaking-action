@@ -121,7 +121,7 @@ $ tree
     └── buf.yaml
 ```
 
-In that case, you can target the `proto` sub-directory in the by setting
+In that case, you can target the `proto` sub-directory by setting
 
 * `input` to `proto`, and
 * `subdir` to `proto` in the `against` reference.
@@ -152,3 +152,4 @@ steps:
 [lint]: https://docs.buf.build/lint/usage
 [modules]: https://docs.buf.build/bsr/overview#module
 [token]: https://docs.buf.build/bsr/authentication#create-an-api-token
+
