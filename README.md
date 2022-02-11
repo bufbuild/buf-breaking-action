@@ -62,10 +62,10 @@ Some examples:
 
 ```sh
 # Build the `main` branch
-buf build .git#main
+buf build .git#branch=main
 
-# Build a feature branch
-buf build .git#v0.1.0
+# Build the v0.1.0 feature tag
+buf build .git#ref=v0.1.0
 
 # Build the Protobuf sources in a sub-directory
 buf build ./proto
