@@ -45,7 +45,7 @@ You can configure `buf-breaking-action` with these parameters:
 
 Parameter | Description | Required | Default
 :---------|:------------|:---------|:-------
-`input` | The [Input] path | | `.`
+`input` |  The path of the [Input] you want to compare with `against` | | `.`
 `against` | The reference to check compatibility against | ✅ |
 `buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{github.actor}}`][context]
 `buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{github.token}}`][context]
@@ -138,7 +138,7 @@ steps:
 ```
 
 [actions]: https://docs.github.com/actions
-[breaking]: https:/docs.buf.build/breaking
+[breaking]: https://docs.buf.build/breaking
 [bsr]: https://docs.buf.build/bsr
 [buf]: https://buf.build
 [buf-build]: https://docs.buf.build/build/usage
