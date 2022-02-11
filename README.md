@@ -1,75 +1,114 @@
-# buf-breaking-action
+# `buf-breaking-action`
 
-Verify backwards compatibility for your Protobuf files with
-[buf](https://github.com/bufbuild/buf) and comment in-line on
-pull requests.
+This [Action][actions] enables you to run [breaking change detection][breaking] with
+[Buf] in your GitHub Actions pipelines. If it detects breaking changes in a pull request, it
+automatically creates inline comments under specific lines in your `.proto` files.
 
-  ![image](./static/img/breaking.png)
+![image](./static/img/breaking.png)
+
+`buf-breaking-action` is also commonly used alongside other `buf` Actions, such as
+[`buf-lint`][buf-lint], which [lints][lint] Protobuf sources, and [`buf-push`][buf-push],
+which pushes Buf [modules] to the  [Buf Schema Registry][bsr] (BSR). See [example
+configurations](#example-configurations) for more.
 
 ## Usage
 
-Refer to the [action.yml](https://github.com/bufbuild/buf-breaking-action/blob/main/action.yml)
-to see all of the action parameters.
-
-The `buf-breaking` action requires that `buf` is installed in the Github Action
-runner, so we'll use the [buf-setup][1] action to install it.
-
-In most cases, you'll only need to configure several variables which are referenced
-in the examples below. In these examples, we'll configure the action on the
-hypothetical `https://github.com/acme/weather.git` repository.
-
-### Pull requests
+Here's an example usage of the `buf-breaking` Action:
 
 ```yaml
-on: pull_request
+on: pull_request # Apply to all pull requests
 jobs:
   validate-protos:
     steps:
+      # Run `git checkout`
       - uses: actions/checkout@v2
+      # Install the `buf` CLI
       - uses: bufbuild/buf-setup-action@v0.5.0
+      # Run breaking change detection against the `main` branch
       - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
 
-This configuration will compare against the `main` branch of the repository.
+With this configuration, the `buf` CLI detects breaking changes between the Protobuf sources in the
+current branch against the `main` branch of the repository.
 
-Please note that in order for the `buf-breaking-action` to run and detect changes successfully,
-both the `input` and the `against` must compile. This can be verified by running `buf build`
-in both inputs.
+## Prerequisites
 
-### Push
+For the `buf-breaking` Action to run, you need to install the `buf` CLI in the GitHub Actions Runner
+first. We recommend using the [`buf-setup`][buf-setup] Action to install it (as in the example
+[above](#usage)).
 
-When we configure this action on `push`, we often need to update the reference to
-check compatibility `against` so that we don't accidentally verify against the same
-commit.
+## Configuration
 
-For example, if we want to run the `buf-breaking` action for all commits pushed to
-the `main` branch, we'll need to update our `against` reference to refer to the
-previous commit, i.e. `HEAD~1`.
+You can configure `buf-breaking-action` with these parameters:
+
+Parameter | Description | Required | Default
+:---------|:------------|:---------|:-------
+`input` | The [Input] path | | `.`
+`against` | The reference to check compatibility against | ✅ |
+`buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{github.actor}}`][context]
+`buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{github.token}}`][context]
+`buf_token` | The Buf [authentication token][token] used for private [Inputs][input]. | |
+
+> These parameters are derived from [`action.yml`](./action.yml).
+
+### Constraints
+
+For the `buf-breaking-action` to detect changes successfully, both the `input` and the `against`
+need to be properly formed Inputs, that is, `buf` needs to be able to [build][buf-build] both into
+an [Image]. You can verify this locally using the [`buf build`][buf-build] command on both Inputs.
+Some examples:
+
+```sh
+# Build the `main` branch
+buf build .git#branch=main
+
+# Build the v0.1.0 feature tag
+buf build .git#ref=v0.1.0
+
+# Build the Protobuf sources in a sub-directory
+buf build ./proto
+```
+
+### Example configurations
+
+Example | Config file
+:-------|:-----------
+Simple breaking change detection | [`examples/simple-change-detection.yaml`](./examples/simple-change-detection.yaml)
+Detect breaking changes, then push | [`examples/detect-and-push.yaml`](./examples/detect-and-push.yaml)
+Detect breaking changes in a sub-directory | [`examples/detect-in-directory.yaml`](./examples/detect-in-directory.yaml)
+
+## Common tasks
+
+### Run on push
+
+A common Buf workflow in GitHub Actions is to push the Protobuf sources in the current branch to the
+[Buf Schema Registry][bsr] if no breaking changes are detected against the previous commit (where
+`ref` is `HEAD~1`).
 
 ```yaml
-on:
+on: # Apply to all pushes to `main`
   push:
     branches:
       - main
 jobs:
   validate-protos:
     steps:
+      # Run `git checkout`
       - uses: actions/checkout@v2
+      # Install the `buf` CLI
       - uses: bufbuild/buf-setup-action@v0.5.0
+      # Run breaking change detection against the last commit
       - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
 
-### Inputs
+### Run against Input in sub-directory
 
-Some repositories are structured so that their `buf.yaml` is defined
-in a sub-directory alongside their Protobuf sources, such as a `proto/`
-directory. In this case, you can specify the relative `input` path and
-the `subdir` option in the `against` reference (this is relevant for
-both `pull_request` and `push`).
+Some repositories are structured in such a way that their [`buf.yaml`][buf-yaml] is defined in a
+sub-directory alongside their Protobuf sources, such as a `proto/` directory. Here's an example:
 
 ```sh
 $ tree
@@ -82,19 +121,34 @@ $ tree
     └── buf.yaml
 ```
 
+In that case, you can target the `proto` sub-directory in the by setting
+
+* `input` to `proto`, and
+* `subdir` to `proto` in the `against` reference.
+
 ```yaml
 steps:
   - uses: actions/checkout@v2
   - uses: bufbuild/buf-setup-action@v0.5.0
+  # Run breaking change detection against the last commit
   - uses: bufbuild/buf-breaking-action@v1
     with:
       input: 'proto'
       against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
 ```
 
-The `buf-breaking` action is also commonly used alongside other `buf` actions,
-such as [buf-lint][2] and [buf-push][3].
-
-  [1]: https://github.com/marketplace/actions/buf-setup
-  [2]: https://github.com/marketplace/actions/buf-lint
-  [3]: https://github.com/marketplace/actions/buf-push
+[actions]: https://docs.github.com/actions
+[breaking]: https:/docs.buf.build/breaking
+[bsr]: https://docs.buf.build/bsr
+[buf]: https://buf.build
+[buf-build]: https://docs.buf.build/build/usage
+[buf-lint]: https://github.com/marketplace/actions/buf-lint
+[buf-push]: https://github.com/marketplace/actions/buf-push
+[buf-setup]: https://github.com/marketplace/actions/buf-setup
+[buf-yaml]: https://docs.buf.build/configuration/v1/buf-yaml
+[context]: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+[image]: https://docs.buf.build/reference/images
+[input]: https://docs.buf.build/reference/inputs
+[lint]: https://docs.buf.build/lint/usage
+[modules]: https://docs.buf.build/bsr/overview#module
+[token]: https://docs.buf.build/bsr/authentication#create-an-api-token
