@@ -24,22 +24,24 @@ jobs:
       - uses: actions/checkout@v2
       # Install the `buf` CLI
       - uses: bufbuild/buf-setup-action@v0.5.0
-      # Run breaking change detection against `main`
+      # Run breaking change detection against the `main` branch
       - uses: bufbuild/buf-breaking-action@v1
         with:
           against: 'https://github.com/acme/weather.git#branch=main'
 ```
 
-With this configuration, the Action detects breaking changes between the Protobuf sources in the
+With this configuration, the `buf` CLI detects breaking changes between the Protobuf sources in the
 current branch against the `main` branch of the repository.
 
 ## Prerequisites
 
-For the `buf-breaking` Action to run, the `buf` CLI needs to be installed in the GitHub Actions
-Runner first. We recommend using the [`buf-setup`][buf-setup] Action to install it (as in the
-example above).
+For the `buf-breaking` Action to run, you need to install the `buf` CLI in the GitHub Actions Runner
+first. We recommend using the [`buf-setup`][buf-setup] Action to install it (as in the example
+[above](#usage)).
 
 ## Configuration
+
+You can configure `buf-breaking-action` with these parameters:
 
 Parameter | Description | Required | Default
 :---------|:------------|:---------|:-------
@@ -49,11 +51,25 @@ Parameter | Description | Required | Default
 `buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{github.token}}`][context]
 `buf_token` | The Buf [authentication token][token] used for private [Inputs][input]. | |
 
-These parameters are derived from [`action.yml`](./action.yml).
+> These parameters are derived from [`action.yml`](./action.yml).
 
-> **Note**: For the `buf-breaking-action` to detect changes successfully, both the `input` and the
-* `against` must be buildable by the `buf` CLI. You can verify this locally using the
-> [`buf build`][buf-build] command on both Inputs.
+### Constraints
+
+For the `buf-breaking-action` to detect changes successfully, both the `input` and the `against`
+need to be properly formed Inputs, that is, `buf` needs to be able to [build][buf-build] both into
+an [Image]. You can verify this locally using the [`buf build`][buf-build] command on both Inputs.
+Some examples:
+
+```sh
+# Build the `main` branch
+buf build .git#main
+
+# Build a feature branch
+buf build .git#v0.1.0
+
+# Build the Protobuf sources in a sub-directory
+buf build ./proto
+```
 
 ### Example configurations
 
@@ -131,6 +147,7 @@ steps:
 [buf-setup]: https://github.com/marketplace/actions/buf-setup
 [buf-yaml]: https://docs.buf.build/configuration/v1/buf-yaml
 [context]: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+[image]: https://docs.buf.build/reference/images
 [input]: https://docs.buf.build/reference/inputs
 [lint]: https://docs.buf.build/lint/usage
 [modules]: https://docs.buf.build/bsr/overview#module
