@@ -45,19 +45,19 @@ You can configure `buf-breaking-action` with these parameters:
 
 Parameter | Description | Required | Default
 :---------|:------------|:---------|:-------
-`input` |  The path of the [Input] you want to compare with `against` | | `.`
+`input` |  The path of the [Buf input][input] you want to compare with `against` | | `.`
 `against` | The reference to check compatibility against | ✅ |
 `buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{github.actor}}`][context]
 `buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{github.token}}`][context]
-`buf_token` | The Buf [authentication token][token] used for private [Inputs][input]. | |
+`buf_token` | The Buf [authentication token][token] used for private [inputs][input]. | |
 
 > These parameters are derived from [`action.yml`](./action.yml).
 
 ### Constraints
 
 For the `buf-breaking-action` to detect changes successfully, both the `input` and the `against`
-need to be properly formed Inputs, that is, `buf` needs to be able to [build][buf-build] both into
-an [Image]. You can verify this locally using the [`buf build`][buf-build] command on both Inputs.
+need to be properly formed inputs, that is, `buf` needs to be able to [build][buf-build] both into
+an [Image]. You can verify this locally using the [`buf build`][buf-build] command on both inputs.
 Some examples:
 
 ```sh
@@ -105,7 +105,7 @@ jobs:
           against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
 ```
 
-### Run against Input in sub-directory
+### Run against input in sub-directory
 
 Some repositories are structured in such a way that their [`buf.yaml`][buf-yaml] is defined in a
 sub-directory alongside their Protobuf sources, such as a `proto/` directory. Here's an example:
