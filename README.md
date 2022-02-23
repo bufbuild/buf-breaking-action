@@ -57,7 +57,7 @@ Parameter | Description | Required | Default
 
 For the `buf-breaking-action` to detect changes successfully, both the `input` and the `against`
 need to be properly formed inputs, that is, `buf` needs to be able to [build][buf-build] both into
-an [Image]. You can verify this locally using the [`buf build`][buf-build] command on both inputs.
+a [Buf image][image]. You can verify this locally using the [`buf build`][buf-build] command on both inputs.
 Some examples:
 
 ```sh
@@ -152,4 +152,3 @@ steps:
 [lint]: https://docs.buf.build/lint/usage
 [modules]: https://docs.buf.build/bsr/overview#module
 [token]: https://docs.buf.build/bsr/authentication#create-an-api-token
-
