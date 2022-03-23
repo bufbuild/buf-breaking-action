@@ -81,6 +81,7 @@ async function runBreaking(): Promise<null | Error> {
       message: "an against was not provided",
     };
   }
+  const since = core.getInput("since");
   const username = core.getInput("buf_input_https_username");
   if (username === "") {
     return {
@@ -134,16 +135,65 @@ async function runBreaking(): Promise<null | Error> {
     return result;
   }
 
-  core.setOutput("results", result.fileAnnotations);
+  let { fileAnnotations } = result;
 
-  if (result.fileAnnotations.length === 0) {
-    core.info("No breaking errors were found.");
+  core.setOutput("results", fileAnnotations);
+
+  if (fileAnnotations.length === 0) {
+    core.info("No breaking changes were found.");
     return null;
+  }
+
+  if (since) {
+    const sinceResult = breaking(binaryPath, since, against);
+    if (isError(sinceResult)) {
+      return sinceResult;
+    }
+
+    const { fileAnnotations: sinceFileAnnotations } = sinceResult;
+
+    fileAnnotations = fileAnnotations.filter(
+      (fileAnnotation: FileAnnotation) => {
+        const { path, start_line, start_column, type, message } =
+          fileAnnotation;
+
+        const introducedEarlier = sinceFileAnnotations.some(
+          (sinceFileAnnotation: FileAnnotation) => {
+            return (
+              path === sinceFileAnnotation.path &&
+              type == sinceFileAnnotation.type &&
+              message === sinceFileAnnotation.message
+            );
+          }
+        );
+
+        if (introducedEarlier) {
+          let prefix = "";
+          if (
+            path !== undefined &&
+            start_line !== undefined &&
+            start_column !== undefined
+          ) {
+            prefix = `${path}:${start_line}:${start_column}:`;
+          }
+          core.info(`${prefix}${message} (introduced earlier)`);
+        }
+
+        return !introducedEarlier;
+      }
+    );
+
+    core.setOutput("results", fileAnnotations);
+
+    if (fileAnnotations.length === 0) {
+      core.info("No new breaking changes were found.");
+      return null;
+    }
   }
 
   // If this action was configured for pull requests, we post the
   // FileAnnotations as comments.
-  result.fileAnnotations.forEach((fileAnnotation: FileAnnotation) => {
+  fileAnnotations.forEach((fileAnnotation: FileAnnotation) => {
     const { path, start_line, start_column, message } = fileAnnotation;
     if (
       path === undefined ||
@@ -163,6 +213,8 @@ async function runBreaking(): Promise<null | Error> {
     );
   });
   return {
-    message: `buf found ${result.fileAnnotations.length} breaking changes.`,
+    message: `buf found ${fileAnnotations.length} ${
+      since ? "new " : ""
+    }breaking changes.`,
   };
 }

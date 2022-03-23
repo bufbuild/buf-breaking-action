@@ -47,6 +47,7 @@ Parameter | Description | Required | Default
 :---------|:------------|:---------|:-------
 `input` |  The path of the [Buf input][input] you want to compare with `against` | | `.`
 `against` | The reference to check compatibility against | ✅ |
+`since` | The reference to ignore breaking changes from | |
 `buf_input_https_username` | The username for the repository to check compatibility against. | | [`${{github.actor}}`][context]
 `buf_input_https_password` | The password for the repository to check compatibility against. | | [`${{github.token}}`][context]
 `buf_token` | The Buf [authentication token][token] used for private [inputs][input]. | |
@@ -84,6 +85,7 @@ Example | Config file
 Simple breaking change detection | [`examples/simple-change-detection.yaml`](./examples/simple-change-detection.yaml)
 Detect breaking changes, then push | [`examples/detect-and-push.yaml`](./examples/detect-and-push.yaml)
 Detect breaking changes in a sub-directory | [`examples/detect-in-directory.yaml`](./examples/detect-in-directory.yaml)
+Detect breaking changes against a release tag, ignoring any already introduced on a base branch | [`examples/ignore-earlier-breaking-changes.yaml`](./examples/ignore-earlier-breaking-changes.yaml)
 
 ## Common tasks
 

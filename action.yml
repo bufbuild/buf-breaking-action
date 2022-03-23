@@ -16,6 +16,8 @@ inputs:
   against:
     description: "The Input to check compatibility against."
     required: true
+  since:
+    description: "Ignore breaking changes introduced before the given Input."
   buf_input_https_username:
     description: "The username for the repository to check compatibility against."
     required: false

@@ -32,6 +32,7 @@ export interface BreakingResult {
 // https://github.com/bufbuild/buf/blob/8255257bd94c9f1b5faa27242211c5caad05be79/internal/buf/bufanalysis/bufanalysis.go#L102
 export interface FileAnnotation {
   message: string;
+  type: string;
   path?: string;
   start_line?: number;
   start_column?: number;
