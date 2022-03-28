@@ -23,7 +23,7 @@ jobs:
       # Run `git checkout`
       - uses: actions/checkout@v2
       # Install the `buf` CLI
-      - uses: bufbuild/buf-setup-action@v0.5.0
+      - uses: bufbuild/buf-setup-action@v1
       # Run breaking change detection against the `main` branch
       - uses: bufbuild/buf-breaking-action@v1
         with:
@@ -98,7 +98,7 @@ jobs:
       # Run `git checkout`
       - uses: actions/checkout@v2
       # Install the `buf` CLI
-      - uses: bufbuild/buf-setup-action@v0.5.0
+      - uses: bufbuild/buf-setup-action@v1
       # Run breaking change detection against the last commit
       - uses: bufbuild/buf-breaking-action@v1
         with:
@@ -129,7 +129,7 @@ In that case, you can target the `proto` sub-directory by setting
 ```yaml
 steps:
   - uses: actions/checkout@v2
-  - uses: bufbuild/buf-setup-action@v0.5.0
+  - uses: bufbuild/buf-setup-action@v1
   # Run breaking change detection against the last commit
   - uses: bufbuild/buf-breaking-action@v1
     with:
