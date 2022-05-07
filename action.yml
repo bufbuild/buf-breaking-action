@@ -23,6 +23,9 @@ inputs:
     default: ${{ github.token }}
   buf_token:
     description: "The buf authentication token used for private inputs."
+  exclude_paths:
+    description: "The exclude paths enable to indicate which directories or files will be excluded from checking."
+    required: false
 runs:
   using: "node12"
   main: "./dist/main.js"

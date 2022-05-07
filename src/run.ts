@@ -87,6 +87,11 @@ async function runBreaking(): Promise<null|Error> {
             message: 'buf_input_https_username not provided'
         };
     }
+    let pathsToExclude: string[] = [];
+    const excludePaths = core.getInput('exclude_paths');
+    if (username !== '') {
+        pathsToExclude = excludePaths.split("\n");
+    }
     process.env[bufInputHTTPSUsername] = username
     const password = core.getInput('buf_input_https_password');
     if (password === '') {
@@ -126,7 +131,7 @@ async function runBreaking(): Promise<null|Error> {
         process.env.NETRC = netrcPath;
     }
 
-    const result = breaking(binaryPath, input, against);
+    const result = breaking(binaryPath, input, against, pathsToExclude);
     if (isError(result)) {
         return result
     }

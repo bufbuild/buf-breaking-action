@@ -53,12 +53,18 @@ export function breaking(
     binaryPath: string,
     input: string,
     against: string,
+    pathsToExclude: string[]
 ): BreakingResult | Error {
-    const rawOutput = runBreakingCommand(`${binaryPath} breaking ${input} --against ${against}`);
+    let breakingCommand = `${binaryPath} breaking ${input} --against ${against}`;
+    if (pathsToExclude.length > 0) {
+        breakingCommand += ` --exclude-path ${pathsToExclude.join(",")}`;
+    }
+    const rawOutput = runBreakingCommand(breakingCommand);
     if (isError(rawOutput)) {
         return rawOutput
     }
-    const jsonOutput = runBreakingCommand(`${binaryPath} breaking ${input} --against ${against} --error-format=json`);
+    breakingCommand += ' --error-format=json';
+    const jsonOutput = runBreakingCommand(breakingCommand);
     if (isError(jsonOutput)) {
         return jsonOutput
     }
