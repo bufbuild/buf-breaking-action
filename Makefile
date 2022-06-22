@@ -9,5 +9,5 @@ build:
 		'--define:process.env.NODE_ENV="production"' \
 		--outdir=dist \
 		--platform=node \
-		--target=node12 \
+		--target=node16 \
 		./src/main.ts

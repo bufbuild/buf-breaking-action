@@ -53,6 +53,12 @@ Parameter | Description | Required | Default
 
 > These parameters are derived from [`action.yml`](./action.yml).
 
+### Output
+
+| Parameter          | Description                          |
+|--------------------|--------------------------------------|
+| `breaking_changes` | Results of all the breaking changes. |
+
 ### Constraints
 
 For the `buf-breaking-action` to detect changes successfully, both the `input` and the `against`
