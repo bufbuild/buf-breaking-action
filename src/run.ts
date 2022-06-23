@@ -130,6 +130,9 @@ async function runBreaking(): Promise<null|Error> {
     if (isError(result)) {
         return result
     }
+
+    core.setOutput('results', result.fileAnnotations)
+
     if (result.fileAnnotations.length === 0) {
         core.info('No breaking errors were found.');
         return null;
