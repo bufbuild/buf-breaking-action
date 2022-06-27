@@ -28,7 +28,7 @@ inputs:
     required: false
 outputs:
   breaking_changes:
-    description: Results of all the breaking changes.
+    description: The generated breaking change messages with the file annotations.
 runs:
   using: node16
   main: ./dist/main.js
