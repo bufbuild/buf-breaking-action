@@ -18,8 +18,8 @@ import * as child from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
-import {breaking, FileAnnotation} from './buf';
-import {Error, isError} from './error';
+import { breaking, FileAnnotation } from './buf';
+import { Error, isError } from './error';
 
 // minimumBufVersion is the minimum buf version required to
 // run this action. At least this version is required because
@@ -68,7 +68,7 @@ export async function run(): Promise<void> {
 
 // runBreaking runs the buf-breaking action, and returns
 // a non-empty error if it fails.
-async function runBreaking(): Promise<null | Error> {
+async function runBreaking(): Promise<null|Error> {
     const input = core.getInput('input');
     if (input === '') {
         return {
@@ -122,7 +122,7 @@ async function runBreaking(): Promise<null | Error> {
         // need to be refactored once we support federation between other
         // BSR remotes.
         const netrcPath = path.join(tempDir, '.netrc');
-        fs.writeFileSync(netrcPath, `machine buf.build\npassword ${bufToken}`, {flag: 'w'});
+        fs.writeFileSync(netrcPath, `machine buf.build\npassword ${bufToken}`, { flag: 'w' });
         process.env.NETRC = netrcPath;
     }
 
@@ -134,12 +134,11 @@ async function runBreaking(): Promise<null | Error> {
         core.info('No breaking errors were found.');
         return null;
     }
-    core.setOutput('breaking_changes', result.fileAnnotations);
 
     // If this action was configured for pull requests, we post the
     // FileAnnotations as comments.
     result.fileAnnotations.forEach((fileAnnotation: FileAnnotation) => {
-        const {path, start_line, start_column, message} = fileAnnotation;
+        const { path, start_line, start_column, message } = fileAnnotation;
         if (path === undefined || start_line === undefined || start_column === undefined) {
             core.error(message);
             return;
@@ -150,8 +149,7 @@ async function runBreaking(): Promise<null | Error> {
         // For more information, see the documentation:
         // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
         core.info(`::error file=${path},line=${start_line},col=${start_column}::${message}`);
-    });
-
+    })
     return {
         message: `buf found ${result.fileAnnotations.length} breaking changes.`
     };

@@ -55,9 +55,9 @@ Parameter | Description | Required | Default
 
 ### Output
 
-| Parameter          | Description                          |
-|--------------------|--------------------------------------|
-| `breaking_changes` | Results of all the breaking changes. |
+| Parameter | Description                                                       |
+|-----------|-------------------------------------------------------------------|
+| `results` | The generated breaking change messages with the file annotations. |
 
 ### Constraints
 

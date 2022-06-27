@@ -1,5 +1,6 @@
-name: buf-breaking
-description: Check that the Input location has no breaking changes compared to the "against" location.
+name: "buf-breaking"
+description: >
+  Check that the Input location has no breaking changes compared to the "against" location.
 branding:
   icon: alert-triangle
   color: blue
@@ -7,28 +8,25 @@ inputs:
   # For more on Buf Inputs:
   # https://docs.buf.build/inputs#specifying-an-input
   input:
-    description: The Input path. Defaults to the root of the current repository.
-    default: .
+    description: "The Input path. Defaults to the root of the current repository."
     required: false
+    default: "."
   # For more on "against" in breaking change detection:
   # https://docs.buf.build/breaking/usage#run-breaking-change-detection
   against:
-    description: The Input to check compatibility against.
+    description: "The Input to check compatibility against."
     required: true
   buf_input_https_username:
-    description: The username for the repository to check compatibility against.
+    description: "The username for the repository to check compatibility against."
+    required: false
     default: ${{ github.actor }}
-    required: false
   buf_input_https_password:
-    description: The password for the repository to check compatibility against.
+    description: "The password for the repository to check compatibility against."
+    required: false
     default: ${{ github.token }}
-    required: false
   buf_token:
-    description: The buf authentication token used for private inputs.
+    description: "The buf authentication token used for private inputs."
     required: false
-outputs:
-  breaking_changes:
-    description: Results of all the breaking changes.
 runs:
-  using: node16
-  main: ./dist/main.js
+  using: "node16"
+  main: "./dist/main.js"
