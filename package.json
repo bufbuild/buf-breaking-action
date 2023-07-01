@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.47.1",
-    "@typescript-eslint/parser": "^5.47.1",
+    "@typescript-eslint/parser": "^5.60.1",
     "@types/node": "^18.11.18",
     "@types/semver": "^7.3.13",
     "esbuild": "^0.16.12",
