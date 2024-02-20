@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Buf Technologies, Inc.
+// Copyright 2020-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,16 +52,16 @@ interface ExecException {
 export function breaking(
   binaryPath: string,
   input: string,
-  against: string
+  against: string,
 ): BreakingResult | Error {
   const rawOutput = runBreakingCommand(
-    `${binaryPath} breaking ${input} --against ${against}`
+    `${binaryPath} breaking ${input} --against ${against}`,
   );
   if (isError(rawOutput)) {
     return rawOutput;
   }
   const jsonOutput = runBreakingCommand(
-    `${binaryPath} breaking ${input} --against ${against} --error-format=json`
+    `${binaryPath} breaking ${input} --against ${against} --error-format=json`,
   );
   if (isError(jsonOutput)) {
     return jsonOutput;
@@ -72,7 +72,7 @@ export function breaking(
       .split("\n")
       .filter((elem) => {
         return elem !== "";
-      })
+      }),
   );
   if (isError(fileAnnotations)) {
     return fileAnnotations;

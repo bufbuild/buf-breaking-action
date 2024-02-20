@@ -1,4 +1,4 @@
-// Copyright 2020-2022 Buf Technologies, Inc.
+// Copyright 2020-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ async function runBreaking(): Promise<null | Error> {
     // For more information, see the documentation:
     // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
     core.info(
-      `::error file=${path},line=${start_line},col=${start_column}::${message}`
+      `::error file=${path},line=${start_line},col=${start_column}::${message}`,
     );
   });
   return {
