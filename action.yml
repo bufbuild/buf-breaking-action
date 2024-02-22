@@ -31,5 +31,5 @@ outputs:
   results:
     description: "The generated breaking change messages with the file annotations."
 runs:
-  using: "node16"
+  using: "node20"
   main: "./dist/main.js"
