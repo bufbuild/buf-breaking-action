@@ -34,3 +34,5 @@ jobs:
           echo 'syntax = "proto3"; message A { string a = 1; }' >> test.proto
       - name: Validate Action
         uses: ./
+        with:
+          against: .
