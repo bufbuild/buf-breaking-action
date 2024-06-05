@@ -27,7 +27,7 @@ jobs:
       # Run breaking change detection against the `main` branch
       - uses: bufbuild/buf-breaking-action@v1
         with:
-          against: 'https://github.com/acme/weather.git#branch=main'
+          against: 'https://github.com/${GITHUB_REPOSITORY}.git#branch=main'
 ```
 
 With this configuration, the `buf` CLI detects breaking changes between the Protobuf sources in the
@@ -91,7 +91,7 @@ Detect breaking changes in a sub-directory | [`examples/detect-in-directory.yaml
 
 A common Buf workflow in GitHub Actions is to push the Protobuf sources in the current branch to the
 [Buf Schema Registry][bsr] if no breaking changes are detected against the previous commit (where
-`ref` is `HEAD~1`).
+`ref` is `${GITHUB_SHA}~1`).
 
 ```yaml
 on: # Apply to all pushes to `main`
@@ -108,7 +108,7 @@ jobs:
       # Run breaking change detection against the last commit
       - uses: bufbuild/buf-breaking-action@v1
         with:
-          against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1'
+          against: 'https://github.com/${GITHUB_REPOSITORY}.git#branch=main,ref=${GITHUB_SHA}~1'
 ```
 
 ### Run against input in sub-directory
@@ -140,7 +140,7 @@ steps:
   - uses: bufbuild/buf-breaking-action@v1
     with:
       input: 'proto'
-      against: 'https://github.com/acme/weather.git#branch=main,ref=HEAD~1,subdir=proto'
+      against: 'https://github.com/${GITHUB_REPOSITORY}.git#branch=main,ref=${GITHUB_SHA}~1,subdir=proto'
 ```
 
 [actions]: https://docs.github.com/actions
