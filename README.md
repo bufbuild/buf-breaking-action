@@ -1,5 +1,10 @@
 # `buf-breaking-action`
 
+> [!NOTE]
+> This action has been deprecated in favor of the [`buf-action`][buf-action] which combines the
+> functionality of `buf-breaking-action` with the ability to run Buf commands in the same step. Please
+> see the [`buf-action`][buf-action] documentation for more information.
+
 This [Action][actions] enables you to run [breaking change detection][breaking] with
 [Buf] in your GitHub Actions pipelines. If it detects breaking changes in a pull request, it
 automatically creates inline comments under specific lines in your `.proto` files.
@@ -144,6 +149,7 @@ steps:
 ```
 
 [actions]: https://docs.github.com/actions
+[buf-action]: https://github.com/bufbuild/buf-action
 [breaking]: https://docs.buf.build/breaking
 [bsr]: https://docs.buf.build/bsr
 [buf]: https://buf.build
