@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^7.0.1",
     "@types/node": "^20.11.19",
     "@types/semver": "^7.5.7",
-    "esbuild": "^0.20.1",
+    "esbuild": "^0.20.2",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3"
   }
